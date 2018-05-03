@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cmath>
+#include <iostream>
 
 class Port
 {
@@ -20,6 +21,7 @@ public:
         else
             return false;
     }
+    friend std::ostream &operator<<(std::ostream &os, Port const &port);
 private:
     static int cnt;
 

@@ -3,13 +3,17 @@
 int Connection::cnt=1;
 
 Connection::Connection(Block bOut, Port pOut, Block bIn, Port pIn):
-    blockIn(),blockOut(),portIn(""),portOut("")
+    blockIn(bIn),blockOut(bOut),portIn(pIn),portOut(pOut)
 {
-    id=Connection::cnt++;
-    blockIn=bIn;
-    blockOut=bOut;
-    portIn=pIn;
-    portOut=pOut;
+    if(bOut!=bIn){
+        id=Connection::cnt++;
+        //blockIn=bIn;
+       // blockOut=bOut;
+       // portIn=pIn;
+       // portOut=pOut;
+    } else {
+        throw 1;
+    }
 }
 
 Connection::~Connection()
@@ -18,7 +22,7 @@ Connection::~Connection()
 }
 
 bool Connection::operator==(const Connection &other) const{
-    if(id==other.id){
+    if(getBlockIn()==other.getBlockIn() and getBlockOut()==other.getBlockOut()){
         return true;
     } else {
         return false;

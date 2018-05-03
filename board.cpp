@@ -6,27 +6,26 @@ Board::Board(std::string nam)
 }
 
 void Board::delBlock(Block block){
-    for(std::vector<Connection>::iterator it=connections.begin();it!=connections.end();++it){
-        if(it->getBlockIn()==block or it->getBlockOut()==block){
-            this->delConnection(it);
+    for(Connection it: connections){
+        if(it.getBlockIn()==block or it.getBlockOut()==block){
+            delConnection(it);
         }
+        std::cerr << "easaeqw" << std::endl;
     }
-    std::vector<Block>::iterator it=std::find(blocks.begin(),blocks.end(),block);
-    if(it!=blocks.end()){
-        blocks.erase(it);
+    std::cerr << getConnections().size() << std::endl;
+    std::vector<Block>::iterator ite=std::find(blocks.begin(),blocks.end(),block);
+    if(ite!=blocks.end()){
+        blocks.erase(ite);
         std::cout << "blocks "<< blocks.size() << std::endl;
     }
 }
 
 void Board::delConnection(Connection con){
+    std::cerr << "ae" << std::endl;
     std::vector<Connection>::iterator it=std::find(connections.begin(),connections.end(),con);
     if(it!=connections.end()){
-        connections.erase(it);
-        std::cout << connections.size() << std::endl;
-    }
-}
 
-void Board::delConnection(std::vector<Connection>::iterator it){
-    connections.erase(it);
+        connections.erase(it);
+    }
 }
 

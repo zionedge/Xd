@@ -9,10 +9,10 @@ public:
     Connection(Block bOut, Port pOut, Block bIn, Port pIn);
     ~Connection();
     bool operator==(const Connection& other) const;
-    Port &getPortOut(){return portOut;}
-    Port &getPortIn(){return portIn;}
-    Block &getBlockOut(){return blockOut;}
-    Block &getBlockIn(){return blockIn;}
+    Port getPortOut()const{return portOut;}
+    Port getPortIn()const{return portIn;}
+    Block getBlockOut()const{return blockOut;}
+    Block getBlockIn()const{return blockIn;}
 private:
     static int cnt;
 

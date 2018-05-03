@@ -19,8 +19,7 @@ SOURCES += main.cpp\
     board.cpp \
     port.cpp \
     qblock.cpp \
-    additionblock.cpp \
-    multiplicationblock.cpp
+    modal.cpp
 
 HEADERS  += widget.h \
     connection.h \
@@ -28,10 +27,12 @@ HEADERS  += widget.h \
     board.h \
     port.h \
     qblock.h \
-    additionblock.h \
-    multiplicationblock.h
+    modal.h
 
-FORMS    += widget.ui
+FORMS    += widget.ui \
+    modal.ui
 
 RESOURCES += \
     res.qrc
+
+CONFIG += c++11

@@ -11,12 +11,12 @@ public:
     std::vector<Block> &getBlocks() {return blocks;}
     std::vector<Connection> &getConnections() {return connections;}
     void setName(std::string nam){name=nam;}
-    void addBlock(Block block){this->blocks.push_back(block);}
-    void addConnection(Connection con){this->connections.push_back(con);}
+    void addBlock(Block block){blocks.push_back(block);}
+    void addConnection(Connection con){connections.push_back(con);}
     void delConnection(Connection con);
-    void delConnection(std::vector<Connection>::iterator it);
     void delBlock(Block block);
     void clearBoard(){blocks.clear(); connections.clear();name="new Board";}
+    void calculateAll(int step);
 private:
     std::string name;
     std::vector<Block> blocks;

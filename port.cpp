@@ -15,3 +15,7 @@ Port::Port(std::string nam,double val)
     value=val;
     id=Port::cnt++;
 }
+
+std::ostream& operator<<(std::ostream &os, Port const &port) {
+    return os << port.name << " " << port.value << std::endl;
+}

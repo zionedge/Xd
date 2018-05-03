@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QtWidgets>
 #include <QToolBar>
+#include <set>
 #include "qblock.h"
 #include "board.h"
 
@@ -20,19 +21,33 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
+    bool detectCycle();
+    void calculateAll(int step);
+    void paintEvent(QPaintEvent *);
 
 protected:
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dropEvent(QDropEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 private slots:
     void on_create_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_clicked();
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_4_clicked();
 
 private:
     Ui::Widget *ui;
     Board board;
     QBlock* chosen=NULL;
+    QBlock* draw=NULL;
+    QBlock* count=NULL;
+    std::string mode;
+    bool cycle;
+    int state;
 };
 
 #endif // WIDGET_H
