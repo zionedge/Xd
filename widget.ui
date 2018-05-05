@@ -100,7 +100,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>výpočet</string>
+    <string>ukladani</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_4">
