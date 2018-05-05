@@ -53,14 +53,27 @@ void Widget::mousePressEvent(QMouseEvent *event)
             if(second==NULL)
                 return;
             if(chosen!=second){
-                second->block.calculate();
-                chosen->block.calculate();
-                std::cerr << second->block.getOutputPorts()[0].getValue() << std::endl;
-                std::cerr << chosen->block.getOutputPorts()[0].getValue() << std::endl;
+                int chosenPorts = chosen->block.getConstOutputPorts().size();
+                int secondPorts = second->block.getConstInputPorts().size();
+                int chosencount = 0;
+                int secondcount = 0;
+                for(Connection con:board.getConnections()){
+                    if(con.getBlockOut()==chosen->block){
+                        chosencount++;
+                    } else if(con.getBlockIn()==second->block){
+                        secondcount++;
+                    }
+                }
+                if(chosencount>=chosenPorts or secondcount>=secondPorts){
+                    return;
+                }
+                Connection con(chosen->block,chosen->block.getOutputPorts()[chosencount],second->block,second->block.getInputPorts()[secondcount]);
+                board.addConnection(con);
                 QPixmap map;
                 map.load(":/plus.png");
                 chosen->setPixmap(map);
                 chosen=NULL;
+                update();
             }
         }
     }
@@ -69,14 +82,16 @@ void Widget::mousePressEvent(QMouseEvent *event)
 void Widget::on_create_clicked()
 {
     Block block;
-    Port port("nam",1.0);
+    Port port("nam");
     Port port1("val");
+    Port port2("val");
     block.addInputPort(port);
+    block.addInputPort(port2);
     block.addOutputPort(port1);
     board.addBlock(block);
     QBlock *lab= new QBlock(this,block,1);
     lab->move(150,150);
-    std::cerr << block;
+    update();
 }
 
 void Widget::on_pushButton_2_clicked()
@@ -168,16 +183,13 @@ void Widget::paintEvent(QPaintEvent *){
 
     QList<QBlock *> blocks = findChildren<QBlock *>(QString(),Qt::FindDirectChildrenOnly);
 
-    std::cerr << blocks.size() << std::endl;
     for(Connection con : board.getConnections()){
         for(QBlock *bl : blocks){
             if(con.getBlockOut()==bl->block){
                 if(draw!=NULL){
-                    painter.drawLine(draw->x(),draw->y(),bl->x(),bl->y());
-                    std::cerr << draw->x() << draw->y() << " " << bl->x() << bl->y() << std::endl;
+                    painter.drawLine(draw->x()+25,draw->y()+25,bl->x()+25,bl->y()+25);
                 }
             } else if(con.getBlockIn()==bl->block){
-                std::cerr << "de" << std::endl;
                 draw=bl;
             } else {
 
