@@ -70,10 +70,10 @@ void Widget::mousePressEvent(QMouseEvent *event)
                 std::cerr << chosen->block.getId() << " " << second->block.getId() << std::endl;
                 Connection con(chosen->block,chosen->block.getOutputPorts()[chosencount],second->block,second->block.getInputPorts()[secondcount]);
                 board.addConnection(con);
-                //if(detectCycle()){
-                  // QMessageBox::information(this, tr("Chyba při spojovani"), "Byl detekovan cyklus. Posledni spoj byl zrušen");
-                  // board.getConnections().pop_back();
-                //}
+                if(detectCycle()){
+                   QMessageBox::information(this, tr("Chyba při spojovani"), "Byl detekovan cyklus. Posledni spoj byl zrušen");
+                   board.getConnections().pop_back();
+                }
                 std::cerr << board.getConnections().size() << std::endl;
                 QPixmap map;
                 map.load(":/plus.png");
@@ -169,13 +169,15 @@ void Widget::saveFile(QString file){
 }
 
 bool Widget::detectCycle(){
-    std::set<Block> set;
+    std::set<Block> setIn;
+    std::set<Block> setOut;
     std::vector<Connection> cons = board.getConnections();
     for(std::vector<Connection>::iterator s=cons.begin();s!=cons.end();++s){
-        if(set.count(s->getBlockOut())){
+        if(setOut.count(s->getBlockIn())){
             return true;
         } else {
-            set.insert(s->getBlockIn());
+            setOut.insert(s->getBlockOut());
+            setIn.insert(s->getBlockIn());
         }
     }
     return false;
