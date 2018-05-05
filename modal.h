@@ -14,6 +14,7 @@ class Modal : public QWidget
 public:
     explicit Modal(QWidget *parent = 0);
     ~Modal();
+    void setLabels(QString in,QString out,QString op);
 
 private:
     Ui::Modal *ui;

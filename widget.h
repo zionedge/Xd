@@ -25,7 +25,7 @@ public:
     bool detectCycle();
     void calculateAll(int step);
     void paintEvent(QPaintEvent *);
-
+    void getValues();
 
 protected:
     void mousePressEvent(QMouseEvent *event);

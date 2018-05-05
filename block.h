@@ -9,7 +9,7 @@
 class Block
 {
 public:
-    Block();
+    Block(int type);
     ~Block();
     int getId() const{return id;}
     std::string getOp() const{return op;}

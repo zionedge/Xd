@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>highlighmin.png</file>
+        <file>highlightmin.png</file>
         <file>highlightmax.png</file>
         <file>highlightmul.png</file>
         <file>highlightplus.png</file>

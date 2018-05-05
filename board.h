@@ -2,6 +2,7 @@
 #define BOARD_H
 
 #include "connection.h"
+#include <set>
 
 class Board
 {
@@ -16,11 +17,15 @@ public:
     void delConnection(Connection con);
     void delBlock(Block block);
     void clearBoard(){blocks.clear(); connections.clear();name="new Board";}
+    void clearBlocks(){blocks.clear();}
     void calculateAll(int step);
+    void setupOrder();
+    std::vector<Port> getInputPorts(){return forInput;}
 private:
     std::string name;
     std::vector<Block> blocks;
     std::vector<Connection> connections;
+    std::vector<Port> forInput;
 };
 
 #endif // BOARD_H

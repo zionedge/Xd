@@ -1,7 +1,7 @@
 #include "qblock.h"
 
 QBlock::QBlock(QWidget *parent, Block bl, int blockType) :
-    QLabel(parent),block()
+    QLabel(parent),block(blockType)
 {
     modal = new Modal(parentWidget());
     block=bl;
@@ -30,13 +30,15 @@ QBlock::QBlock(QWidget *parent, Block bl, int blockType) :
 }
 
 QBlock::~QBlock(){
-    if(modal!=NULL){
-        delete modal;
-    }
+    delete modal;
 }
 
 void QBlock::enterEvent(QEvent *event){
+    QString in = QString::number(block.getInputPorts().size());
+    QString out = QString::number(block.getOutputPorts().size());
+    QString op = QString::fromStdString(block.getOp());
     modal->show();
+    modal->setLabels(in,out,op);
     modal->setGeometry(QRect(x()-50,y()-85,160,82));
     QWidget::enterEvent(event);
 }

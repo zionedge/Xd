@@ -10,11 +10,12 @@ class Port
 public:
     Port(std::string nam);
     Port(std::string nam, double val);
+    ~Port();
     double getValue() const {return value;}
     std::string getName() const {return name;}
     int getId() const {return id;}
-    void setValue(double val){this->value=val;}
-    void setName(std::string nam){this->name=nam;}
+    void setValue(double val){value=val;}
+    void setName(std::string nam){name=nam;}
     bool operator==(const Port& other) const{
         if(this->id==other.id)
             return true;
