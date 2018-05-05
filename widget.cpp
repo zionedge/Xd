@@ -67,8 +67,14 @@ void Widget::mousePressEvent(QMouseEvent *event)
                 if(chosencount>=chosenPorts or secondcount>=secondPorts){
                     return;
                 }
+                std::cerr << chosen->block.getId() << " " << second->block.getId() << std::endl;
                 Connection con(chosen->block,chosen->block.getOutputPorts()[chosencount],second->block,second->block.getInputPorts()[secondcount]);
                 board.addConnection(con);
+                //if(detectCycle()){
+                  // QMessageBox::information(this, tr("Chyba při spojovani"), "Byl detekovan cyklus. Posledni spoj byl zrušen");
+                  // board.getConnections().pop_back();
+                //}
+                std::cerr << board.getConnections().size() << std::endl;
                 QPixmap map;
                 map.load(":/plus.png");
                 chosen->setPixmap(map);
@@ -107,7 +113,6 @@ void Widget::on_pushButton_2_clicked()
 void Widget::keyPressEvent(QKeyEvent *event){
     if(chosen and (event->key()==Qt::Key_Delete or event->key()==Qt::Key_D)){
         board.delBlock(chosen->block);
-        std::cerr << "new " << std::endl;
         delete chosen;
         chosen=NULL;
         update();
@@ -127,7 +132,6 @@ void Widget::on_pushButton_clicked()
             }
         }
         board.addConnection(con);
-        std::cerr << board.getConnections().size();
     } catch(int n){
         if(n==1){
             QMessageBox::information(this, tr("Chyba při spojovani"), "Nelze spojit blok sám se sebou.");
@@ -188,14 +192,22 @@ void Widget::paintEvent(QPaintEvent *){
             if(con.getBlockOut()==bl->block){
                 if(draw!=NULL){
                     painter.drawLine(draw->x()+25,draw->y()+25,bl->x()+25,bl->y()+25);
+                    draw = NULL;
+                } else {
+                    draw=bl;
                 }
             } else if(con.getBlockIn()==bl->block){
-                draw=bl;
+                if(draw!=NULL){
+                    painter.drawLine(draw->x()+25,draw->y()+25,bl->x()+25,bl->y()+25);
+                    draw = NULL;
+                } else {
+                    draw=bl;
+                }
             } else {
 
             }
         }
-    }
+    } 
 }
 
 void Widget::calculateAll(int step){
