@@ -1,13 +1,29 @@
 #include "qblock.h"
 
-QBlock::QBlock(QWidget *parent, Block bl) :
+QBlock::QBlock(QWidget *parent, Block bl, int blockType) :
     QLabel(parent),block()
 {
     modal = new Modal(parentWidget());
     block=bl;
     this->setGeometry(QRect(100,100,50,50));
     QPixmap pix;
-    pix.load(":/res.png");
+    switch(blockType){
+    case 1:
+        pix.load(":/plus.png");
+        break;
+    case 2:
+        pix.load(":/mul.png");
+        break;
+    case 3:
+        pix.load(":/max.png");
+        break;
+    case 4:
+        pix.load(":/min.png");
+        break;
+    case 5:
+        pix.load(":/pyth.png");
+        break;
+    }
     this->setPixmap(pix);
     this->show();
     this->setMouseTracking(true);
@@ -18,17 +34,6 @@ QBlock::~QBlock(){
         delete modal;
     }
 }
-
-/*
-void QBlock::mouseMoveEvent(QMouseEvent *event){
-    if(this->rect().contains(event->pos())){
-
-    } else {
-
-        event->ignore();
-    }
-}
-*/
 
 void QBlock::enterEvent(QEvent *event){
     modal->show();

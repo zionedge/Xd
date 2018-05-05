@@ -26,23 +26,40 @@ void Widget::mousePressEvent(QMouseEvent *event)
     if(event->button() == Qt::LeftButton){
         if(chosen==NULL){
             chosen = static_cast<QBlock*>(childAt(event->pos()));
+            if(chosen==NULL)
+                return;
+            QPixmap map;
+            map.load(":/chosenplus.png");
+            chosen->setPixmap(map);
         } else {
             chosen->move(event->pos());
+            QPixmap map;
+            map.load(":/plus.png");
+            chosen->setPixmap(map);
             chosen=NULL;
             update();
         }
-
     }
     else if(event->button() == Qt::RightButton){
         if(chosen==NULL){
             chosen = static_cast<QBlock*>(childAt(event->pos()));
+            if(chosen==NULL)
+                return;
+            QPixmap map;
+            map.load(":/chosenplus.png");
+            chosen->setPixmap(map);
         } else {
             QBlock *second = static_cast<QBlock*>(childAt(event->pos()));
+            if(second==NULL)
+                return;
             if(chosen!=second){
                 second->block.calculate();
                 chosen->block.calculate();
                 std::cerr << second->block.getOutputPorts()[0].getValue() << std::endl;
                 std::cerr << chosen->block.getOutputPorts()[0].getValue() << std::endl;
+                QPixmap map;
+                map.load(":/plus.png");
+                chosen->setPixmap(map);
                 chosen=NULL;
             }
         }
@@ -57,7 +74,7 @@ void Widget::on_create_clicked()
     block.addInputPort(port);
     block.addOutputPort(port1);
     board.addBlock(block);
-    QBlock *lab= new QBlock(this,block);
+    QBlock *lab= new QBlock(this,block,1);
     lab->move(150,150);
     std::cerr << block;
 }
@@ -98,17 +115,38 @@ void Widget::on_pushButton_clicked()
         std::cerr << board.getConnections().size();
     } catch(int n){
         if(n==1){
-            QMessageBox::information(this, tr("QMessageBox::information()"), "Nelze spojit blok sám se sebou.");
+            QMessageBox::information(this, tr("Chyba při spojovani"), "Nelze spojit blok sám se sebou.");
         }
     }
 }
 
 void Widget::on_pushButton_3_clicked()
 {
+    /*
     bool tf = detectCycle();
     cycle=tf;
     std::cerr << tf << std::endl;
     calculateAll(0);
+    */
+    QFileDialog *log = new QFileDialog(this);
+    log->show();
+    connect(log,SIGNAL(fileSelected(QString)),this,SLOT(saveFile(QString)));
+}
+
+void Widget::saveFile(QString file){
+
+    //std::string file='\"'+fileName.toStdString()+'\"';
+    //std::cerr << file << std::endl;
+    //std::replace(file.begin(),file.end(),'/','\\');
+    std::ofstream myfile(file.toStdString(), std::ios::out | std::ios::binary);
+    if(!myfile.is_open()){
+        std::cerr << "F" << std::endl;
+        return;
+    }
+    //std::cerr << file << std::endl;
+    myfile << "Hello world";
+    myfile.close();
+
 }
 
 bool Widget::detectCycle(){
@@ -152,7 +190,9 @@ void Widget::calculateAll(int step){
     if(step){
         if(step>board.getBlocks().size()){
             state=1;
-            count->setGeometry(count->x(),count->y(),50,50);
+            QPixmap map;
+            map.load(":/plus.png");
+            count->setPixmap(map);
             count->repaint();
             count=NULL;
             return;
@@ -162,11 +202,15 @@ void Widget::calculateAll(int step){
         for(QBlock *bl : blocks){
             if(bl->block==b){
                 if(count!=NULL){
-                    count->setGeometry(count->x(),count->y(),50,50);
+                    QPixmap map;
+                    map.load(":/plus.png");
+                    count->setPixmap(map);
                     count->repaint();
                 }
                 count = bl;
-                bl->setGeometry(bl->x(),bl->y(),25,25);
+                QPixmap map;
+                map.load(":/highlightplus.png");
+                bl->setPixmap(map);
                 bl->repaint();
                 break;
             }
@@ -180,11 +224,15 @@ void Widget::calculateAll(int step){
             for(QBlock * bl: blocks){
                 if(bl->block==b){
                     if(count){
-                        count->setGeometry(count->x(),count->y(),50,50);
+                        QPixmap map;
+                        map.load(":/plus.png");
+                        count->setPixmap(map);
                         count->repaint();
                     }
                     count = bl;
-                    bl->setGeometry(bl->x(),bl->y(),25,25);
+                    QPixmap map;
+                    map.load(":/highlightplus.png");
+                    bl->setPixmap(map);
                     bl->repaint();
                     Sleep(500);
                 }
@@ -192,7 +240,10 @@ void Widget::calculateAll(int step){
             b.calculate();
             //TODO prenos
         }
-        count->setGeometry(count->x(),count->y(),50,50);
+        QPixmap map;
+        map.load(":/plus.png");
+        count->setPixmap(map);
+        count->repaint();
     }
 }
 

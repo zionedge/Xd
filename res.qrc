@@ -1,6 +1,19 @@
 <RCC>
     <qresource prefix="/">
-        <file>res.png</file>
-        <file>src.png</file>
+        <file>highlighmin.png</file>
+        <file>highlightmax.png</file>
+        <file>highlightmul.png</file>
+        <file>highlightplus.png</file>
+        <file>highlightpyth.png</file>
+        <file>chosenmax.png</file>
+        <file>chosenmin.png</file>
+        <file>chosenmul.png</file>
+        <file>chosenplus.png</file>
+        <file>chosenpyth.png</file>
+        <file>max.png</file>
+        <file>min.png</file>
+        <file>mul.png</file>
+        <file>plus.png</file>
+        <file>pyth.png</file>
     </qresource>
 </RCC>

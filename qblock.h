@@ -10,12 +10,11 @@
 class QBlock : public QLabel
 {
 public:
-    QBlock(QWidget *parent, Block bl);
+    QBlock(QWidget *parent, Block bl, int blockType);
     ~QBlock();
     Block block;
     Modal* modal;
 protected:
-    //void mouseMoveEvent(QMouseEvent *event);
     void enterEvent(QEvent * event);
     void leaveEvent(QEvent * event);
 };

@@ -7,6 +7,7 @@
 #include <QtWidgets>
 #include <QToolBar>
 #include <set>
+#include <fstream>
 #include "qblock.h"
 #include "board.h"
 
@@ -25,6 +26,7 @@ public:
     void calculateAll(int step);
     void paintEvent(QPaintEvent *);
 
+
 protected:
     void mousePressEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
@@ -38,6 +40,8 @@ private slots:
     void on_pushButton_3_clicked();
 
     void on_pushButton_4_clicked();
+
+    void saveFile(QString);
 
 private:
     Ui::Widget *ui;
