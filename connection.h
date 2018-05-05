@@ -13,6 +13,7 @@ public:
     Port getPortIn()const{return portIn;}
     Block getBlockOut()const{return blockOut;}
     Block getBlockIn()const{return blockIn;}
+    friend std::ostream &operator<<(std::ostream &os, Connection const &cn);
 private:
     static int cnt;
 
