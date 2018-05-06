@@ -237,7 +237,8 @@ void Widget::loadFile(QString file){
     std::string token;
     myfile >> token;
     if(token.compare("[blocks]") != 0) {
-        std::cerr << "Nacitany soubor neni datove schema" << std::endl;
+        QMessageBox::information(this, tr("Chyba při čtení souboru"), "Načítaný soubor není datové schéma");
+        return;
     }
     //read blocks
     int id, idOut, idIn, x, y;
@@ -251,7 +252,7 @@ void Widget::loadFile(QString file){
             break;
         }
         id = std::stoi(token);
-        myfile >> op >> name1 >> token; //>> name2 >> value2 >> name3 >> value3;
+        myfile >> op >> name1 >> token;
         if(token.compare("nan") == 0) value1 = NAN;
         else value1 = std::stod(token);
         myfile >> name2 >> token;
