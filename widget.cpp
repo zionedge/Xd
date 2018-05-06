@@ -269,7 +269,13 @@ void Widget::loadFile(QString file){
         block.addInputPort(port2);
         block.addOutputPort(port3);
         board.addBlock(block);
-        QBlock *lab= new QBlock(this,block,ui->comboBox->currentIndex()+1);
+        int type;
+        if(op.compare("+") == 0) type = 1;
+        if(op.compare("*") == 0) type = 2;
+        if(op.compare("max") == 0) type = 3;
+        if(op.compare("min") == 0) type = 4;
+        if(op.compare("pyth") == 0) type = 5;
+        QBlock *lab= new QBlock(this,block,type);
         lab->move(x, y);
         update();
         valSet=false;
