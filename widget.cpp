@@ -9,7 +9,7 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
     setAcceptDrops(true);
     setAutoFillBackground(true);
-    cycle=false;
+    valSet=false;
     state=1;
 }
 
@@ -126,6 +126,7 @@ void Widget::mousePressEvent(QMouseEvent *event)
                 chosen->setPixmap(map);
                 chosen=NULL;
                 update();
+                valSet=false;
             }
         }
     }
@@ -144,16 +145,12 @@ void Widget::on_create_clicked()
     QBlock *lab= new QBlock(this,block,ui->comboBox->currentIndex()+1);
     lab->move(150,150);
     update();
+    valSet=false;
 }
 
 void Widget::on_pushButton_2_clicked()
 {
-    bool ok;
-    double d = QInputDialog::getDouble(this, tr("QInputDialog::getDouble()"),
-                                       tr("Amount:"), 37.56, -10000, 10000, 2, &ok);
-    if(d){
-
-    }
+    calculateAll(state);
 }
 
 void Widget::keyPressEvent(QKeyEvent *event){
@@ -162,6 +159,7 @@ void Widget::keyPressEvent(QKeyEvent *event){
         delete chosen;
         chosen=NULL;
         update();
+        valSet=false;
     }
 }
 
@@ -218,15 +216,46 @@ void Widget::saveFile(QString file){
 }
 
 bool Widget::detectCycle(){
-    /*std::set<Block> setOut;
+    std::vector<Block> blOut;
+    std::vector<Block> blIn;
     std::vector<Connection> cons = board.getConnections();
-    for(std::vector<Connection>::iterator s=cons.begin();s!=cons.end();++s){
-        if(setOut.count(s->getBlockIn())){
-            return true;
-        } else {
-            setOut.insert(s->getBlockOut());
+    for(Connection con:cons){
+        blOut.push_back(con.getBlockOut());
+        std::cerr << "OUTPORT " << con.getBlockOut().getId() << std::endl;
+        blIn.push_back(con.getBlockIn());
+        std::cerr << "INPORT " << con.getBlockIn().getId() << std::endl;
+    }
+    for(Block bl:blOut){
+        Block save=bl;
+        Block work=bl;
+        Block bail=bl;
+        if(std::find(blIn.begin(),blIn.end(),bl)!=blIn.end()){
+            while(std::find(blIn.begin(),blIn.end(),work)!=blIn.end()){
+                for(Connection con:cons){
+                    if(con.getBlockIn()==work){
+                        if(bail!=work){
+                            while(std::find(blIn.begin(),blIn.end(),bail)!=blIn.end()){
+                                for(Connection cs:cons){
+                                    if(cs.getBlockIn()==bail){
+                                        bail=cs.getBlockOut();
+                                        if(bail==save){
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        bail=con.getBlockOut();
+                        std::cerr << work.getId() << std::endl;
+                        if(bail==save){
+                            return true;
+                        }
+                    }
+                }
+                work=bail;
+            }
         }
-    }*/
+    }
     return false;
 }
 
@@ -240,7 +269,36 @@ void Widget::paintEvent(QPaintEvent *){
         for(QBlock *bl : blocks){
             if(con.getBlockOut()==bl->block){
                 if(draw!=NULL){
-                    painter.drawLine(draw->x()+25,draw->y()+25,bl->x()+25,bl->y()+25);
+                    painter.drawLine(bl->x()+25,bl->y()+25,draw->x()+25,draw->y()+25);
+                    if(draw->x()>bl->x()){
+                        if(draw->y()>bl->y()){
+                            if((draw->x()-bl->x())>(draw->y()-bl->y())){
+                                painter.drawEllipse(draw->x()-10,draw->y()+12,25,25);
+                            } else {
+                                painter.drawEllipse(draw->x()+12,draw->y()-10,25,25);
+                            }
+                        } else {
+                            if((draw->x()-bl->x())>(bl->y()-draw->y())){
+                                painter.drawEllipse(draw->x()-10,draw->y()+12,25,25);
+                            } else {
+                                painter.drawEllipse(draw->x()+12,draw->y()+35,25,25);
+                            }
+                        }
+                    } else {
+                        if(draw->y()>bl->y()){
+                            if((bl->x()-draw->x())>(draw->y()-bl->y())){
+                                painter.drawEllipse(draw->x()+35,draw->y()+12,25,25);
+                            } else {
+                                painter.drawEllipse(draw->x()+12,draw->y()-10,25,25);
+                            }
+                        } else {
+                            if((draw->x()-bl->x())>(draw->y()-bl->y())){
+                                painter.drawEllipse(draw->x()+12,draw->y()+35,25,25);
+                            } else {
+                                painter.drawEllipse(draw->x()+35,draw->y()+12,25,25);
+                            }
+                        }
+                    }
                     draw = NULL;
                 } else {
                     draw=bl;
@@ -248,6 +306,35 @@ void Widget::paintEvent(QPaintEvent *){
             } else if(con.getBlockIn()==bl->block){
                 if(draw!=NULL){
                     painter.drawLine(draw->x()+25,draw->y()+25,bl->x()+25,bl->y()+25);
+                    if(bl->x()>draw->x()){
+                        if(bl->y()>draw->y()){
+                            if((bl->x()-draw->x())>(bl->y()-draw->y())){
+                                painter.drawEllipse(bl->x()-10,bl->y()+12,25,25);
+                            } else {
+                                painter.drawEllipse(bl->x()+12,bl->y()-10,25,25);
+                            }
+                        } else {
+                            if((bl->x()-draw->x())>(draw->y()-bl->y())){
+                                painter.drawEllipse(bl->x()-10,bl->y()+12,25,25);
+                            } else {
+                                painter.drawEllipse(bl->x()+12,bl->y()+35,25,25);
+                            }
+                        }
+                    } else {
+                        if(bl->y()>draw->y()){
+                            if((draw->x()-bl->x())>(bl->y()-draw->y())){
+                                painter.drawEllipse(bl->x()+35,bl->y()+12,25,25);
+                            } else {
+                                painter.drawEllipse(bl->x()+12,bl->y()-10,25,25);
+                            }
+                        } else {
+                            if((bl->x()-draw->x())>(bl->y()-draw->y())){
+                                painter.drawEllipse(bl->x()+12,bl->y()+35,25,25);
+                            } else {
+                                painter.drawEllipse(bl->x()+35,bl->y()+12,25,25);
+                            }
+                        }
+                    }
                     draw = NULL;
                 } else {
                     draw=bl;
@@ -260,7 +347,16 @@ void Widget::paintEvent(QPaintEvent *){
 }
 
 void Widget::calculateAll(int step){
+    if(detectCycle()){
+        QMessageBox::information(this, tr("Chyba spojů"), "Byl detekovan cyklus. Nelze provést výpočet.");
+        return;
+    }
     if(step){
+        if(!valSet){
+            board.setupOrder();
+            getValues();
+            valSet=true;
+        }
         if(step>board.getBlocks().size()){
             state=1;
             QPixmap map;
@@ -278,6 +374,7 @@ void Widget::calculateAll(int step){
             count->setPixmap(map);
             count->repaint();
             count=NULL;
+            valSet=false;
             return;
         }
         Block b =board.getBlocks()[state-1];
@@ -319,14 +416,35 @@ void Widget::calculateAll(int step){
             }
         }
         b.calculate();
+        int val=0;
+        for(Connection con:board.getConnections()){
+            if(con.getBlockOut()==b){
+                for(Block block:board.getBlocks()){
+                    if(block==con.getBlockIn()){
+                        if(block.getInputPorts()[0]==con.getPortIn()){
+                            board.getBlocks()[val].getInputPorts()[0].setValue(b.getOutputPorts()[0].getValue());
+                        } else {
+                            board.getBlocks()[val].getInputPorts()[1].setValue(b.getOutputPorts()[0].getValue());
+                        }
+                    } else {
+                        val++;
+                    }
+                }
+            }
+        }
+        for(QBlock * bl:blocks){
+            if(bl->block==b){
+                bl->block=b;
+            }
+        }
         state++;
     } else {
         board.setupOrder();
         getValues();
         std::cerr << board.getBlocks().size() << std::endl;
         count = NULL;
+        QList<QBlock *> blocks = findChildren<QBlock *>(QString(),Qt::FindDirectChildrenOnly);
         for(Block &b : board.getBlocks()){
-            QList<QBlock *> blocks = findChildren<QBlock *>(QString(),Qt::FindDirectChildrenOnly);
             for(QBlock * bl: blocks){
                 if(bl->block==b){
                     if(count){
@@ -382,6 +500,13 @@ void Widget::calculateAll(int step){
             }
         }
         QPixmap map;
+        for(QBlock * bl:blocks){
+            for(Block &block:board.getBlocks()){
+                if(bl->block==block){
+                    bl->block=block;
+                }
+            }
+        }
         if(count->block.getOp()=="+"){
             map.load(":/plus.png");
         } else if(count->block.getOp()=="*"){

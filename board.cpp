@@ -6,22 +6,21 @@ Board::Board(std::string nam)
 }
 
 void Board::delBlock(Block block){
-    for(Connection it: connections){
+    std::vector<Connection> con=connections;
+    for(Connection it: con){
         if(it.getBlockIn()==block or it.getBlockOut()==block){
             delConnection(it);
         }
-        std::cerr << "easaeqw" << std::endl;
     }
-    std::cerr << getConnections().size() << std::endl;
+    std::cerr << "cons" << getConnections().size() << std::endl;
     std::vector<Block>::iterator ite=std::find(blocks.begin(),blocks.end(),block);
     if(ite!=blocks.end()){
         blocks.erase(ite);
-        std::cout << "blocks "<< blocks.size() << std::endl;
+        std::cerr << "blocks "<< blocks.size() << std::endl;
     }
 }
 
 void Board::delConnection(Connection con){
-    std::cerr << "ae" << std::endl;
     std::vector<Connection>::iterator it=std::find(connections.begin(),connections.end(),con);
     if(it!=connections.end()){
 
@@ -45,11 +44,6 @@ void Board::setupOrder(){
             }
         }
     }
-    /* else {
-                if(std::find(getBlocks().begin(),getBlocks().end(),bl)==getBlocks().end()){
-                    addBlock(bl);
-                }
-            }*/
     for(Block bl:cpy){
         if(std::find(forInput.begin(),forInput.end(),bl.getInputPorts()[0])!=forInput.end() and
            std::find(forInput.begin(),forInput.end(),bl.getInputPorts()[1])!=forInput.end()){

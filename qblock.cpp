@@ -34,12 +34,13 @@ QBlock::~QBlock(){
 }
 
 void QBlock::enterEvent(QEvent *event){
-    QString in = QString::number(block.getInputPorts().size());
-    QString out = QString::number(block.getOutputPorts().size());
+    QString in = QString::number(block.getInputPorts()[0].getValue());
+    QString in2 = QString::number(block.getInputPorts()[1].getValue());
+    QString out = QString::number(block.getOutputPorts()[0].getValue());
     QString op = QString::fromStdString(block.getOp());
     modal->show();
-    modal->setLabels(in,out,op);
-    modal->setGeometry(QRect(x()-50,y()-85,160,82));
+    modal->setLabels(in,in2,out,op);
+    modal->setGeometry(QRect(x()-50,y()-120,160,120));
     QWidget::enterEvent(event);
 }
 

@@ -50,7 +50,7 @@ private:
     QBlock* draw=NULL;
     QBlock* count=NULL;
     std::string mode;
-    bool cycle;
+    bool valSet;
     int state;
 };
 
