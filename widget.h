@@ -23,7 +23,7 @@ public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
     bool detectCycle();
-    void calculateAll(int step);
+    void calculateAll(unsigned int step);
     void paintEvent(QPaintEvent *);
     void getValues();
 
@@ -55,7 +55,7 @@ private:
     QBlock* count=NULL;
     std::string mode;
     bool valSet;
-    int state;
+    unsigned int state;
 };
 
 #endif // WIDGET_H

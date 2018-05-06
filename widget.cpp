@@ -1,6 +1,5 @@
 #include "widget.h"
 #include "ui_widget.h"
-#include <Windows.h>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -94,7 +93,26 @@ void Widget::mousePressEvent(QMouseEvent *event)
                 int chosencount = 0;
                 int secondcount = 0;
                 for(Connection con:board.getConnections()){
-                    if(con.getBlockOut()==chosen->block){
+                    if(con.getBlockIn()==second->block and con.getBlockOut()==chosen->block){
+                        board.delConnection(con);
+                        QPixmap map;
+                        if(chosen->block.getOp()=="+"){
+                            map.load(":/plus.png");
+                        } else if(chosen->block.getOp()=="*"){
+                            map.load(":/mul.png");
+                        } else if(chosen->block.getOp()=="max"){
+                            map.load(":/max.png");
+                        } else if(chosen->block.getOp()=="min"){
+                            map.load(":/min.png");
+                        } else {
+                            map.load(":/pyth.png");
+                        }
+                        chosen->setPixmap(map);
+                        chosen=NULL;
+                        update();
+                        valSet=false;
+                        return;
+                    } else if(con.getBlockOut()==chosen->block){
                         chosencount++;
                     } else if(con.getBlockIn()==second->block){
                         secondcount++;
@@ -135,7 +153,7 @@ void Widget::mousePressEvent(QMouseEvent *event)
 void Widget::on_create_clicked()
 {
     Block block(ui->comboBox->currentIndex()+1);
-    Port port("nam");
+    Port port("val");
     Port port1("val");
     Port port2("val");
     block.addInputPort(port);
@@ -166,40 +184,17 @@ void Widget::keyPressEvent(QKeyEvent *event){
 void Widget::on_pushButton_clicked()
 {
     calculateAll(0);
-    /*
-    try{
-        Connection con(board.getBlocks()[0],board.getBlocks()[0].getOutputPorts()[0],board.getBlocks()[1],board.getBlocks()[1].getInputPorts()[0]);
-        for(Connection save:board.getConnections()){
-            if(save==con){
-                board.delConnection(save);
-                std::cerr << board.getConnections().size();
-                update();
-                return;
-            }
-        }
-        board.addConnection(con);
-    } catch(int n){
-        if(n==1){
-            QMessageBox::information(this, tr("Chyba při spojovani"), "Nelze spojit blok sám se sebou.");
-        }
-    }
-    */
 }
 
 void Widget::on_pushButton_3_clicked()
 {
-    /*
-    bool tf = detectCycle();
-    cycle=tf;
-    std::cerr << tf << std::endl;
-    calculateAll(0);
-    */
     QFileDialog *log = new QFileDialog(this);
     log->show();
     connect(log,SIGNAL(fileSelected(QString)),this,SLOT(saveFile(QString)));
 }
 
 void Widget::saveFile(QString file){
+
     std::ofstream myfile(file.toStdString(), std::ios::out | std::ios::binary);
     if(!myfile.is_open()){
         std::cerr << "F" << std::endl;
@@ -214,6 +209,7 @@ void Widget::saveFile(QString file){
         myfile << c << std::endl;
     }
     myfile.close();
+
 }
 
 void Widget::on_pushButton_5_clicked()
@@ -224,6 +220,9 @@ void Widget::on_pushButton_5_clicked()
 }
 
 void Widget::loadFile(QString file){
+    board.clearBoard();
+    qDeleteAll(findChildren<QBlock *>(QString(),Qt::FindDirectChildrenOnly));
+
     std::ifstream myfile(file.toStdString(), std::ios::in | std::ios::binary);
     if(!myfile.is_open()){
         std::cerr << "F" << std::endl;
@@ -401,7 +400,7 @@ void Widget::paintEvent(QPaintEvent *){
     } 
 }
 
-void Widget::calculateAll(int step){
+void Widget::calculateAll(unsigned int step){
     if(detectCycle()){
         QMessageBox::information(this, tr("Chyba spojů"), "Byl detekovan cyklus. Nelze provést výpočet.");
         return;
@@ -533,7 +532,6 @@ void Widget::calculateAll(int step){
                     }
                     bl->setPixmap(map);
                     bl->repaint();
-                    Sleep(500);
                 }
             }
             b.calculate();
@@ -606,7 +604,7 @@ void Widget::getValues(){
                     for(Block bla:board.getBlocks()){
                         if(bla.getInputPorts()[0]==pt){
                             board.getBlocks()[val].getInputPorts()[0].setValue(d);
-                            std::cerr << "De " << d << std::endl;
+                            bl->block.getInputPorts()[0].setValue(d);
                         } else {
                             val++;
                         }
@@ -634,7 +632,7 @@ void Widget::getValues(){
                     for(Block bla:board.getBlocks()){
                         if(bla.getInputPorts()[1]==pt){
                             board.getBlocks()[val].getInputPorts()[1].setValue(d);
-                            std::cerr << "Da " << board.getBlocks()[0].getInputPorts()[1].getValue() << std::endl;
+                            bl->block.getInputPorts()[1].setValue(d);
                         } else {
                             val++;
                         }

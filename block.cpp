@@ -89,7 +89,7 @@ void Block::calculate(){
         else
             res=inputPorts[1].getValue();
     } else {
-        res=sqrt(inputPorts[0].getValue()*inputPorts[0].getValue())+(inputPorts[1].getValue()*inputPorts[1].getValue());
+        res=sqrt(inputPorts[0].getValue()*inputPorts[0].getValue()+(inputPorts[1].getValue()*inputPorts[1].getValue()));
     }
     for(std::vector<Port>::iterator it=outputPorts.begin();it!=outputPorts.end();++it){
         it->setValue(res);
@@ -98,7 +98,7 @@ void Block::calculate(){
 }
 
 std::ostream &operator<<(std::ostream &os, Block const &bl) {
-    os << bl.op;
+    os << bl.getId() << " " << bl.op;
     for(Port port: bl.getConstInputPorts()){
         os << " " << port;
     }

@@ -40,7 +40,16 @@ void QBlock::enterEvent(QEvent *event){
     QString op = QString::fromStdString(block.getOp());
     modal->show();
     modal->setLabels(in,in2,out,op);
-    modal->setGeometry(QRect(x()-50,y()-120,160,120));
+    if(x()<50 and y()<120){
+       modal->setGeometry(QRect(x()+50,y()+50,160,120));
+    } else if(y()<120){
+       modal->setGeometry(QRect(x(),y()+50,160,120));
+    } else if(x()<50){
+       modal->setGeometry(QRect(x()+50,y(),160,120));
+    } else {
+        modal->setGeometry(QRect(x()-50,y()-120,160,120));
+    }
+    modal->raise();
     QWidget::enterEvent(event);
 }
 
