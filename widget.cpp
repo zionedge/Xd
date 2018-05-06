@@ -284,7 +284,6 @@ void Widget::loadFile(QString file){
         idOut = std::stoi(token);
         token = "";
         myfile >> idIn;
-        std::cerr << idOut << " " << idIn << std::endl;
         std::vector<Connection> cons = board.getConnections();
         int found = 0;
         for(auto c: cons) {
@@ -292,7 +291,6 @@ void Widget::loadFile(QString file){
                 found = 1;
             }
         }
-        std::cerr << "debug pripojeni nenalezeno" << std::endl;
         Block bOut = m.find(idOut)->second;
         Block bIn = m.find(idIn)->second;
         Connection con(bOut, bOut.getOutputPorts()[0], bIn, bIn.getConstInputPorts()[found]);
