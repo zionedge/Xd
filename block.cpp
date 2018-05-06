@@ -1,7 +1,7 @@
 /** Block.cpp
  *
- *  Jakub Pag·Ë xpagac06
- *  Jan Nov·k xnovak1s
+ *  Jakub Pag√°ƒç xpagac06
+ *  Jan Nov√°k xnovak1s
  */
 
 #include "block.h"
