@@ -53,10 +53,16 @@ void Board::setupOrder(){
             addBlock(bl);
         }
     }
+    if(cpy.size()==1) return;
+    if(cons.size()==0) return;
+    std::vector<Block>::iterator b;
     while(!cpy.empty()){
         std::vector<Block> save=getBlocks();
         for(Connection con:cons){
             for(Block bl:save){
+                if((b=std::find(cpy.begin(),cpy.end(),bl))!=cpy.end()){
+                    cpy.erase(b);
+                }
                 if(con.getBlockOut()==bl){
                     if(std::find(getBlocks().begin(),getBlocks().end(),con.getBlockIn())==getBlocks().end()){
                         if(std::find(forInput.begin(),forInput.end(),con.getBlockIn().getInputPorts()[0])!=forInput.end() or
@@ -81,7 +87,6 @@ void Board::setupOrder(){
                 }
             }
         }
-        cpy.pop_back();
     }
 }
 
