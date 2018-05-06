@@ -1,8 +1,3 @@
-/** Widget.cpp
- *
- *  Jakub Pagáč xpagac06
- *  Jan Novák xnovak1s
- */
 #include "widget.h"
 #include "ui_widget.h"
 
@@ -24,6 +19,9 @@ Widget::~Widget()
     }
     if(draw!=NULL){
         delete draw;
+    }
+    if(count!=NULL){
+        delete count;
     }
     delete ui;
 }
@@ -123,12 +121,14 @@ void Widget::mousePressEvent(QMouseEvent *event)
                 if(chosencount>=chosenPorts or secondcount>=secondPorts){
                     return;
                 }
+                std::cerr << chosen->block.getId() << " " << second->block.getId() << std::endl;
                 Connection con(chosen->block,chosen->block.getOutputPorts()[chosencount],second->block,second->block.getInputPorts()[secondcount]);
                 board.addConnection(con);
                 if(detectCycle()){
                    QMessageBox::information(this, tr("Chyba při spojovani"), "Byl detekovan cyklus. Posledni spoj byl zrušen");
                    board.getConnections().pop_back();
                 }
+                std::cerr << board.getConnections().size() << std::endl;
                 QPixmap map;
                 if(chosen->block.getOp()=="+"){
                     map.load(":/plus.png");
@@ -176,14 +176,6 @@ void Widget::keyPressEvent(QKeyEvent *event){
     }
 }
 
-void Widget::on_pushButton_clicked()
-{
-    if(board.getBlocks().size()==0){
-        return;
-    }
-    calculateAll(0);
-}
-
 void Widget::on_pushButton_3_clicked()
 {
     QFileDialog *log = new QFileDialog(this);
@@ -213,6 +205,7 @@ void Widget::saveFile(QString file){
         myfile << c << std::endl;
     }
     myfile.close();
+
 }
 
 void Widget::on_pushButton_5_clicked()
@@ -310,7 +303,9 @@ bool Widget::detectCycle(){
     std::vector<Connection> cons = board.getConnections();
     for(Connection con:cons){
         blOut.push_back(con.getBlockOut());
+        std::cerr << "OUTPORT " << con.getBlockOut().getId() << std::endl;
         blIn.push_back(con.getBlockIn());
+        std::cerr << "INPORT " << con.getBlockIn().getId() << std::endl;
     }
     for(Block bl:blOut){
         Block save=bl;
@@ -333,6 +328,7 @@ bool Widget::detectCycle(){
                             }
                         }
                         bail=con.getBlockOut();
+                        std::cerr << work.getId() << std::endl;
                         if(bail==save){
                             return true;
                         }
@@ -348,7 +344,6 @@ bool Widget::detectCycle(){
 void Widget::paintEvent(QPaintEvent *){
     QPainter painter(this);
     painter.fillRect(this->rect(),Qt::white);
-    QBlock* draw=NULL;
 
     QList<QBlock *> blocks = findChildren<QBlock *>(QString(),Qt::FindDirectChildrenOnly);
 
@@ -430,7 +425,7 @@ void Widget::paintEvent(QPaintEvent *){
 
             }
         }
-    }
+    } 
 }
 
 void Widget::calculateAll(unsigned int step){
@@ -447,20 +442,20 @@ void Widget::calculateAll(unsigned int step){
         if(step>board.getBlocks().size()){
             state=1;
             QPixmap map;
-            if(draw->block.getOp()=="+"){
+            if(count->block.getOp()=="+"){
                 map.load(":/plus.png");
-            } else if(draw->block.getOp()=="*"){
+            } else if(count->block.getOp()=="*"){
                 map.load(":/mul.png");
-            } else if(draw->block.getOp()=="max"){
+            } else if(count->block.getOp()=="max"){
                 map.load(":/max.png");
-            } else if(draw->block.getOp()=="min"){
+            } else if(count->block.getOp()=="min"){
                 map.load(":/min.png");
             } else {
                 map.load(":/pyth.png");
             }
-            draw->setPixmap(map);
-            draw->repaint();
-            draw=NULL;
+            count->setPixmap(map);
+            count->repaint();
+            count=NULL;
             valSet=false;
             return;
         }
@@ -468,23 +463,23 @@ void Widget::calculateAll(unsigned int step){
         QList<QBlock *> blocks = findChildren<QBlock *>(QString(),Qt::FindDirectChildrenOnly);
         for(QBlock *bl : blocks){
             if(bl->block==b){
-                if(draw!=NULL){
+                if(count!=NULL){
                     QPixmap map;
-                    if(draw->block.getOp()=="+"){
+                    if(count->block.getOp()=="+"){
                         map.load(":/plus.png");
-                    } else if(draw->block.getOp()=="*"){
+                    } else if(count->block.getOp()=="*"){
                         map.load(":/mul.png");
-                    } else if(draw->block.getOp()=="max"){
+                    } else if(count->block.getOp()=="max"){
                         map.load(":/max.png");
-                    } else if(draw->block.getOp()=="min"){
+                    } else if(count->block.getOp()=="min"){
                         map.load(":/min.png");
                     } else {
                         map.load(":/pyth.png");
                     }
-                    draw->setPixmap(map);
-                    draw->repaint();
+                    count->setPixmap(map);
+                    count->repaint();
                 }
-                draw = bl;
+                count = bl;
                 QPixmap map;
                 if(bl->block.getOp()=="+"){
                     map.load(":/highlightplus.png");
@@ -528,28 +523,29 @@ void Widget::calculateAll(unsigned int step){
     } else {
         board.setupOrder();
         getValues();
-        draw = NULL;
+        std::cerr << board.getBlocks().size() << std::endl;
+        count = NULL;
         QList<QBlock *> blocks = findChildren<QBlock *>(QString(),Qt::FindDirectChildrenOnly);
         for(Block &b : board.getBlocks()){
             for(QBlock * bl: blocks){
                 if(bl->block==b){
-                    if(draw){
+                    if(count){
                         QPixmap map;
-                        if(draw->block.getOp()=="+"){
+                        if(count->block.getOp()=="+"){
                             map.load(":/plus.png");
-                        } else if(draw->block.getOp()=="*"){
+                        } else if(count->block.getOp()=="*"){
                             map.load(":/mul.png");
-                        } else if(draw->block.getOp()=="max"){
+                        } else if(count->block.getOp()=="max"){
                             map.load(":/max.png");
-                        } else if(draw->block.getOp()=="min"){
+                        } else if(count->block.getOp()=="min"){
                             map.load(":/min.png");
                         } else {
                             map.load(":/pyth.png");
                         }
-                        draw->setPixmap(map);
-                        draw->repaint();
+                        count->setPixmap(map);
+                        count->repaint();
                     }
-                    draw = bl;
+                    count = bl;
                     QPixmap map;
                     if(bl->block.getOp()=="+"){
                         map.load(":/highlightplus.png");
@@ -592,19 +588,20 @@ void Widget::calculateAll(unsigned int step){
                 }
             }
         }
-        if(draw->block.getOp()=="+"){
+        if(count->block.getOp()=="+"){
             map.load(":/plus.png");
-        } else if(draw->block.getOp()=="*"){
+        } else if(count->block.getOp()=="*"){
             map.load(":/mul.png");
-        } else if(draw->block.getOp()=="max"){
+        } else if(count->block.getOp()=="max"){
             map.load(":/max.png");
-        } else if(draw->block.getOp()=="min"){
+        } else if(count->block.getOp()=="min"){
             map.load(":/min.png");
         } else {
             map.load(":/pyth.png");
         }
-        draw->setPixmap(map);
-        draw->repaint();
+        count->setPixmap(map);
+        count->repaint();
+        std::cerr << board.getBlocks().back().getOutputPorts()[0].getValue() << std::endl;
     }
 }
 
@@ -629,8 +626,8 @@ void Widget::getValues(){
                 bl->setPixmap(map);
                 bl->repaint();
                 bool ok;
-                double d = QInputDialog::getDouble(this, tr("Zadejte hodnotu na vstupu"),
-                                                   tr("Hodnota:"), 1.0, -10000, 10000, 2, &ok);
+                double d = QInputDialog::getDouble(this, tr("QInputDialog::getDouble()"),
+                                                   tr("Amount:"), 37.56, -10000, 10000, 2, &ok);
                 if(ok){
                     for(Block bla:board.getBlocks()){
                         if(bla.getInputPorts()[0]==pt){
@@ -657,8 +654,8 @@ void Widget::getValues(){
                 bl->setPixmap(map);
                 bl->repaint();
                 bool ok;
-                double d = QInputDialog::getDouble(this, tr("Zadejte hodnotu na vstupu"),
-                                                   tr("Hodnota:"), 1.0, -10000, 10000, 2, &ok);
+                double d = QInputDialog::getDouble(this, tr("QInputDialog::getDouble()"),
+                                                   tr("Amount:"), 37.56, -10000, 10000, 2, &ok);
                 if(ok){
                     for(Block bla:board.getBlocks()){
                         if(bla.getInputPorts()[1]==pt){
@@ -692,8 +689,5 @@ void Widget::getValues(){
 
 void Widget::on_pushButton_4_clicked()
 {
-    if(board.getBlocks().size()==0){
-        return;
-    }
     calculateAll(state);
 }
