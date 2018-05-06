@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Přidej blok</string>
+    <string>pridava bloky</string>
    </property>
   </widget>
   <widget class="QComboBox" name="comboBox">
@@ -87,7 +87,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Spoj bloky</string>
+    <string>spoj 2 bloky</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_3">
@@ -100,7 +100,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Ulož schéma</string>
+    <string>ukladani</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_4">
@@ -113,7 +113,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Spusť výpočet</string>
+    <string>vypocet kroky</string>
    </property>
   </widget>
  </widget>

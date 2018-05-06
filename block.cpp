@@ -2,10 +2,26 @@
 
 int Block::cnt=1;
 
-Block::Block()
+Block::Block(int type)
 {
     id=Block::cnt++;
-    op="+";
+    switch(type){
+    case 1:
+        op="+";
+        break;
+    case 2:
+        op="*";
+        break;
+    case 3:
+        op="max";
+        break;
+    case 4:
+        op="min";
+        break;
+    case 5:
+        op="pyth";
+        break;
+    }
 }
 
 Block::~Block()
@@ -57,21 +73,37 @@ void Block::calculate(){
        for(std::vector<Port>::iterator it=inputPorts.begin();it!=inputPorts.end();++it){
            res += it->getValue();
        }
+    } else if(op=="*"){
+        res=1.0;
+        for(std::vector<Port>::iterator it=inputPorts.begin();it!=inputPorts.end();++it){
+            res *= it->getValue();
+        }
+    } else if(op=="max"){
+        if(inputPorts[0].getValue()>inputPorts[1].getValue())
+            res=inputPorts[0].getValue();
+        else
+            res=inputPorts[1].getValue();
+    } else if(op=="min"){
+        if(inputPorts[0].getValue()<inputPorts[1].getValue())
+            res=inputPorts[0].getValue();
+        else
+            res=inputPorts[1].getValue();
     } else {
-
+        res=sqrt(inputPorts[0].getValue()*inputPorts[0].getValue())+(inputPorts[1].getValue()*inputPorts[1].getValue());
     }
     for(std::vector<Port>::iterator it=outputPorts.begin();it!=outputPorts.end();++it){
         it->setValue(res);
     }
+    std::cerr << getInputPorts()[0] << getInputPorts()[1] << getOutputPorts()[0] << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &os, Block const &bl) {
-    os << bl.getId() << " " << bl.getOp();
+    os << bl.op << " ";
     for(Port port: bl.getConstInputPorts()){
-        os << " " << port;
+        os << port;
     }
     for(Port port: bl.getConstOutputPorts()){
-        os << " " << port;
+        os << port;
     }
     return os;
 }
