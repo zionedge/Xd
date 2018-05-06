@@ -1,3 +1,9 @@
+/** Block.cpp
+ *
+ *  Jakub Pag·Ë xpagac06
+ *  Jan Nov·k xnovak1s
+ */
+
 #include "block.h"
 
 int Block::cnt=1;
@@ -94,7 +100,6 @@ void Block::calculate(){
     for(std::vector<Port>::iterator it=outputPorts.begin();it!=outputPorts.end();++it){
         it->setValue(res);
     }
-    std::cerr << getInputPorts()[0] << getInputPorts()[1] << getOutputPorts()[0] << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &os, Block const &bl) {

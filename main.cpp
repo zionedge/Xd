@@ -1,3 +1,8 @@
+/** Main.cpp
+ *
+ *  Jakub Pag·Ë xpagac06
+ *  Jan Nov·k xnovak1s
+ */
 #include "widget.h"
 #include <QApplication>
 

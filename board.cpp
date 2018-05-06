@@ -1,3 +1,8 @@
+/** Board.cpp
+ *
+ *  Jakub Pag·Ë xpagac06
+ *  Jan Nov·k xnovak1s
+ */
 #include "board.h"
 
 Board::Board(std::string nam)
@@ -12,11 +17,9 @@ void Board::delBlock(Block block){
             delConnection(it);
         }
     }
-    std::cerr << "cons" << getConnections().size() << std::endl;
     std::vector<Block>::iterator ite=std::find(blocks.begin(),blocks.end(),block);
     if(ite!=blocks.end()){
         blocks.erase(ite);
-        std::cerr << "blocks "<< blocks.size() << std::endl;
     }
 }
 

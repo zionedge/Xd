@@ -1,3 +1,8 @@
+/** Qblock.cpp
+ *
+ *  Jakub Pag·Ë xpagac06
+ *  Jan Nov·k xnovak1s
+ */
 #include "qblock.h"
 
 QBlock::QBlock(QWidget *parent, Block bl, int blockType) :

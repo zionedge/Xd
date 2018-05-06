@@ -1,24 +1,20 @@
+/** Connection.cpp
+ *
+ *  Jakub Pagבט xpagac06
+ *  Jan Novבk xnovak1s
+ */
 #include "connection.h"
 
 int Connection::cnt=1;
 
 Connection::Connection(Block bOut, Port pOut, Block bIn, Port pIn):
-    blockIn(bIn),blockOut(bOut),portIn(pIn),portOut(pOut)
+    portOut(pOut),portIn(pIn),blockOut(bOut),blockIn(bIn)
 {
     if(bOut!=bIn){
         id=Connection::cnt++;
-        //blockIn=bIn;
-       // blockOut=bOut;
-       // portIn=pIn;
-       // portOut=pOut;
     } else {
         throw 1;
     }
-}
-
-Connection::~Connection()
-{
-
 }
 
 bool Connection::operator==(const Connection &other) const{

@@ -1,3 +1,8 @@
+/** Modal.cpp
+ *
+ *  Jakub Pag·Ë xpagac06
+ *  Jan Nov·k xnovak1s
+ */
 #include "modal.h"
 #include "ui_modal.h"
 
