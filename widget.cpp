@@ -261,7 +261,13 @@ void Widget::loadFile(QString file){
         myfile >> name3 >> token >> x >> y;
         if(token.compare("nan") == 0) value3 = NAN;
         else value3 = std::stod(token);
-        Block block(ui->comboBox->currentIndex()+1);
+        int type;
+        if(op.compare("+") == 0) type = 1;
+        if(op.compare("*") == 0) type = 2;
+        if(op.compare("max") == 0) type = 3;
+        if(op.compare("min") == 0) type = 4;
+        if(op.compare("pyth") == 0) type = 5;
+        Block block(type);
         Port port1(name1, value1);
         Port port2(name2, value2);
         Port port3(name3, value3);
@@ -269,12 +275,6 @@ void Widget::loadFile(QString file){
         block.addInputPort(port2);
         block.addOutputPort(port3);
         board.addBlock(block);
-        int type;
-        if(op.compare("+") == 0) type = 1;
-        if(op.compare("*") == 0) type = 2;
-        if(op.compare("max") == 0) type = 3;
-        if(op.compare("min") == 0) type = 4;
-        if(op.compare("pyth") == 0) type = 5;
         QBlock *lab= new QBlock(this,block,type);
         lab->move(x, y);
         update();
