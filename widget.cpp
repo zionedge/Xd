@@ -202,7 +202,13 @@ void Widget::saveFile(QString file){
     }
     myfile << "[blocks]" << std::endl;
     for(auto b: board.getBlocks()) {
-        myfile << b << std::endl;
+        QList<QBlock *> blocks = findChildren<QBlock *>(QString(),Qt::FindDirectChildrenOnly);
+        myfile << b << " ";
+        for(QBlock* bl: blocks) {
+            if(bl->block == b) {
+                myfile << bl->x() << " " << bl->y() << std::endl;
+            }
+        }
     }
     myfile << "[connections]" << std::endl;
     for(auto c: board.getConnections()) {
@@ -234,9 +240,11 @@ void Widget::loadFile(QString file){
         std::cerr << "Nacitany soubor neni datove schema" << std::endl;
     }
     //read blocks
-    int id, idOut, idIn;
+    int id, idOut, idIn, x, y;
     std::string op, name1, name2, name3;
     double value1, value2, value3;
+    std::map<int, Block> m;
+    board.clearBoard();
     while(!myfile.eof()) {
         myfile >> token;
         if(token.compare("[connections]") == 0) {
@@ -249,12 +257,25 @@ void Widget::loadFile(QString file){
         myfile >> name2 >> token;
         if(token.compare("nan") == 0) value2 = NAN;
         else value2 = std::stod(token);
-        myfile >> name3 >> token;
+        myfile >> name3 >> token >> x >> y;
         if(token.compare("nan") == 0) value3 = NAN;
         else value3 = std::stod(token);
-        std::cout << id << op << name1 << value1 << name2 << value2 << name3 << value3 << std::endl;
+        Block block(ui->comboBox->currentIndex()+1);
+        Port port1(name1, value1);
+        Port port2(name2, value2);
+        Port port3(name3, value3);
+        block.addInputPort(port1);
+        block.addInputPort(port2);
+        block.addOutputPort(port3);
+        board.addBlock(block);
+        QBlock *lab= new QBlock(this,block,ui->comboBox->currentIndex()+1);
+        lab->move(x, y);
+        update();
+        valSet=false;
+        m.insert(std::pair<int, Block>(id, block));
     }
     //read connections
+    token = "";
     while(!myfile.eof()) {
         myfile >> token;
         if(token.empty()) {
@@ -263,9 +284,21 @@ void Widget::loadFile(QString file){
         idOut = std::stoi(token);
         token = "";
         myfile >> idIn;
-        std::cout << idOut << idIn << std::endl;
+        std::cerr << idOut << " " << idIn << std::endl;
+        std::vector<Connection> cons = board.getConnections();
+        int found = 0;
+        for(auto c: cons) {
+            if(c.getBlockIn() == m.find(idIn)->second) {
+                found = 1;
+            }
+        }
+        std::cerr << "debug pripojeni nenalezeno" << std::endl;
+        Block bOut = m.find(idOut)->second;
+        Block bIn = m.find(idIn)->second;
+        Connection con(bOut, bOut.getOutputPorts()[0], bIn, bIn.getConstInputPorts()[found]);
+        board.addConnection(con);
     }
-    std::cout << std::flush;
+    std::cerr << std::flush;
     myfile.close();
 }
 
