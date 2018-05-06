@@ -200,17 +200,11 @@ void Widget::on_pushButton_3_clicked()
 }
 
 void Widget::saveFile(QString file){
-
-    //std::string file='\"'+fileName.toStdString()+'\"';
-    //std::cerr << file << std::endl;
-    //std::replace(file.begin(),file.end(),'/','\\');
     std::ofstream myfile(file.toStdString(), std::ios::out | std::ios::binary);
     if(!myfile.is_open()){
         std::cerr << "F" << std::endl;
         return;
     }
-    //std::cerr << file << std::endl;
-    //myfile << "Hello world";
     myfile << "[blocks]" << std::endl;
     for(auto b: board.getBlocks()) {
         myfile << b << std::endl;
@@ -220,7 +214,6 @@ void Widget::saveFile(QString file){
         myfile << c << std::endl;
     }
     myfile.close();
-
 }
 
 void Widget::on_pushButton_5_clicked()
@@ -236,11 +229,45 @@ void Widget::loadFile(QString file){
         std::cerr << "F" << std::endl;
         return;
     }
-    std::string tst;
-    myfile >> tst;
-    std::cout << tst;
+    std::string token;
+    myfile >> token;
+    if(token.compare("[blocks]") != 0) {
+        std::cerr << "Nacitany soubor neni datove schema" << std::endl;
+    }
+    //read blocks
+    int id, idOut, idIn;
+    std::string op, name1, name2, name3;
+    double value1, value2, value3;
+    while(!myfile.eof()) {
+        myfile >> token;
+        if(token.compare("[connections]") == 0) {
+            break;
+        }
+        id = std::stoi(token);
+        myfile >> op >> name1 >> token; //>> name2 >> value2 >> name3 >> value3;
+        if(token.compare("nan") == 0) value1 = NAN;
+        else value1 = std::stod(token);
+        myfile >> name2 >> token;
+        if(token.compare("nan") == 0) value2 = NAN;
+        else value2 = std::stod(token);
+        myfile >> name3 >> token;
+        if(token.compare("nan") == 0) value3 = NAN;
+        else value3 = std::stod(token);
+        std::cout << id << op << name1 << value1 << name2 << value2 << name3 << value3 << std::endl;
+    }
+    //read connections
+    while(!myfile.eof()) {
+        myfile >> token;
+        if(token.empty()) {
+            break;
+        }
+        idOut = std::stoi(token);
+        token = "";
+        myfile >> idIn;
+        std::cout << idOut << idIn << std::endl;
+    }
+    std::cout << std::flush;
     myfile.close();
-
 }
 
 bool Widget::detectCycle(){
