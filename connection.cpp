@@ -30,7 +30,7 @@ bool Connection::operator==(const Connection &other) const{
 }
 
 std::ostream &operator<<(std::ostream &os, Connection const &cn) {
-   os << cn.getBlockOut().getId() << " " << cn.getBlockIn().getId() << " ";
+   os << cn.getBlockOut().getId() << " " << cn.getBlockIn().getId();
     return os;
 }
 

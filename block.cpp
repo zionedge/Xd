@@ -98,12 +98,12 @@ void Block::calculate(){
 }
 
 std::ostream &operator<<(std::ostream &os, Block const &bl) {
-    os << bl.op << " ";
+    os << bl.op;
     for(Port port: bl.getConstInputPorts()){
-        os << port;
+        os << " " << port;
     }
     for(Port port: bl.getConstOutputPorts()){
-        os << port;
+        os << " " << port;
     }
     return os;
 }

@@ -210,7 +210,35 @@ void Widget::saveFile(QString file){
         return;
     }
     //std::cerr << file << std::endl;
-    myfile << "Hello world";
+    //myfile << "Hello world";
+    myfile << "[blocks]" << std::endl;
+    for(auto b: board.getBlocks()) {
+        myfile << b << std::endl;
+    }
+    myfile << "[connections]" << std::endl;
+    for(auto c: board.getConnections()) {
+        myfile << c << std::endl;
+    }
+    myfile.close();
+
+}
+
+void Widget::on_pushButton_5_clicked()
+{
+    QFileDialog *log = new QFileDialog(this);
+    log->show();
+    connect(log,SIGNAL(fileSelected(QString)),this,SLOT(loadFile(QString)));
+}
+
+void Widget::loadFile(QString file){
+    std::ifstream myfile(file.toStdString(), std::ios::in | std::ios::binary);
+    if(!myfile.is_open()){
+        std::cerr << "F" << std::endl;
+        return;
+    }
+    std::string tst;
+    myfile >> tst;
+    std::cout << tst;
     myfile.close();
 
 }
